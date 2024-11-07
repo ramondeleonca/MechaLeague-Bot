@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script defer>
+        const obj = {
+            vx: 0,
+            vy: 0,
+            omega: 0
+        };
+
+        const ws = new WebSocket("ws://mechaleague-bot.local:81");
+
+        window.addEventListener("keydown", ev => {
+            switch(ev.key) {
+                case "w": {
+                    obj.vx = 0.75;
+                    obj.vy = 0;
+                    obj.omega = 0;
+                    break;
+                }
+                case "s": {
+                    obj.vx = -0.75;
+                    obj.vy = 0;
+                    obj.omega = 0;
+                    break;
+                }
+                case "a": {
+                    obj.vx = 0;
+                    obj.vy = 0.75;
+                    obj.omega = 0;
+                    break;
+                }
+                case "d": {
+                    obj.vx = 0;
+                    obj.vy = -0.75;
+                    obj.omega = 0;
+                    break;
+                }
+            }
+        });
+
+        window.addEventListener("keyup", () => {
+            obj.vx = 0;
+            obj.vy = 0;
+            obj.omega = 0;
+        });
+
+        
+        function sendLoop() {
+            setTimeout(() => {
+                ws.send(JSON.stringify(obj));
+            }, 1000);
+            sendLoop();
+        }
+
+        ws.onopen = sendLoop;
+    </script>
+
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>

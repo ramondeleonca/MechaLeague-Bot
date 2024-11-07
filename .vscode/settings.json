@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "*.ejs": "html",
+        "bitset": "cpp",
+        "cstddef": "cpp",
+        "memory": "cpp",
+        "type_traits": "cpp",
+        "cmath": "cpp"
+    }
+}
