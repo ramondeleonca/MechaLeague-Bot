@@ -6,6 +6,10 @@
 #include <impl/tests/remotexy/defs.h>
 #include <Wire.h>
 #include <WS2812FX.h>
+#include <lib/hal/Gyrometer.cpp>
+#include <lib/control/JoystickUtils.h>
+#include <lib/utility/hooks.h>
+#include <ESP32Servo.h>
 
 MechaLeagueMotorController motors(MOTOR_CONTROLLER_RX_PIN, MOTOR_CONTROLLER_TX_PIN, MOTOR_CONTROLLER_ENABLE_PIN);
 float wheelSpeeds[4];
@@ -14,6 +18,12 @@ ChassisSpeeds chassisSpeeds;
 
 // LEDS
 WS2812FX leds(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+// Hooks
+UseCallback servoStateCallback;
+
+Servo servo1;
+Servo servo2;
 
 float getVbat() {
     int val = analogRead(BATTERY_PIN);
@@ -33,6 +43,15 @@ void ledTask(void *pvParameters) {
         leds.service();
         // vTaskDelay(200 / portTICK_PERIOD_MS);
         delay(20);
+    }
+}
+
+Gyrometer gyro;
+TaskHandle_t gyroTaskHandle;
+void gyroTask(void *pvParameters) {
+    for (;;) {
+        gyro.update();
+        delay(10);
     }
 }
 
@@ -57,8 +76,36 @@ void setup() {
     leds.start();
     xTaskCreate(ledTask, "ledTask", 2048, NULL, 1, &ledTaskHandle);
 
+    // start gyro
+    gyro.begin();
+    xTaskCreate(gyroTask, "gyroTask", 2048, NULL, 1, &gyroTaskHandle);
+
     pinMode(2, OUTPUT);
     digitalWrite(2, HIGH);
+
+    ESP32PWM::allocateTimer(0);
+	ESP32PWM::allocateTimer(1);
+	ESP32PWM::allocateTimer(2);
+	ESP32PWM::allocateTimer(3);
+
+    servo1.setPeriodHertz(50);
+    servo1.attach(SERVO_1_PIN, 400, 2400);
+
+    servo2.setPeriodHertz(50);
+    servo2.attach(SERVO_2_PIN, 400, 2400);
+
+    servo1.write(95);
+    servo2.write(0);
+
+    servoStateCallback.setCallback([](bool last, bool current) {
+        if (RemoteXY.fieldOriented) {
+            servo1.write(95);
+            servo2.write(0);
+        } else {
+            servo1.write(0);
+            servo2.write(95);
+        }
+    }); 
 }
 
 ulong lastTime;
@@ -70,20 +117,18 @@ void loop() {
     // Handle RemoteXY events
     RemoteXY_Handler();
 
+    servoStateCallback.update(RemoteXY.fieldOriented == 1);
+
+    float heading = gyro.getYaw();
+
     // Update chassis speeds
     if (RemoteXY.connect_flag) {
-        chassisSpeeds.set(
-            (RemoteXY.lefty / 100.0) * 0.5,
-            (-RemoteXY.leftx / 100.0) * 0.75,
-            (-RemoteXY.rightx / 100.0) * 1.5
-        );
-        // Serial.print("Chassis speeds: ");
-        // Serial.print(chassisSpeeds.getVx());
-        // Serial.print(" ");
-        // Serial.print(chassisSpeeds.getVy());
-        // Serial.print(" ");
-        // Serial.print(chassisSpeeds.getOmega());
-        // Serial.println();
+        float xSpeed = RemoteXY.lefty / 100.0 * 0.5; // Meters per second
+        float ySpeed = -RemoteXY.leftx / 100.0 * 0.75; // Meters per second
+        float rotSpeed = -RemoteXY.rightx / 100.0 * 1.25; // Radians per second
+
+        chassisSpeeds.set(xSpeed, ySpeed, rotSpeed);
+        
         if (abs(RemoteXY.leftx) > 10 || abs(RemoteXY.lefty) > 10 || abs(RemoteXY.rightx) > 10) {
             leds.setMode(FX_MODE_RAINBOW_CYCLE);
             leds.setSpeed(1000);
@@ -102,6 +147,8 @@ void loop() {
     String upperMessage = buildUpperMessage(vbat);
     RemoteXY.message[0] = '\0';
     upperMessage.toCharArray(RemoteXY.message, 51);
+
+    RemoteXY.heading = heading;
 
     // Update wheel speeds
     kinematics.calculateWheelSpeeds(wheelSpeeds, chassisSpeeds.getVx(), chassisSpeeds.getVy(), chassisSpeeds.getOmega());

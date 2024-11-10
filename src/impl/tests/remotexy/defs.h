@@ -1,5 +1,5 @@
 /*
-   -- LA CHACALOSA --
+   -- LA CHACALOSA by RAMON DE LEON --
    
    This source code of graphical user interface 
    has been generated automatically by RemoteXY editor.
@@ -23,25 +23,25 @@
 //#define REMOTEXY__DEBUGLOG    
 
 // RemoteXY select connection mode and include library 
-#define REMOTEXY_MODE__WIFI_POINT
+#define REMOTEXY_MODE__ESP32CORE_BLE
 
-#include <WiFi.h>
+#include <BLEDevice.h>
 
 // RemoteXY connection settings 
-#define REMOTEXY_WIFI_SSID "LA CHACALOSA"
-#define REMOTEXY_WIFI_PASSWORD "lachacalosabuscasuchacal"
-#define REMOTEXY_SERVER_PORT 6377
+#define REMOTEXY_BLUETOOTH_NAME "LA CHACALOSA"
 
 
 #include <RemoteXY.h>
 
 // RemoteXY GUI configuration  
 #pragma pack(push, 1)  
-uint8_t RemoteXY_CONF[] =   // 78 bytes
-  { 255,4,0,51,0,71,0,19,0,0,0,76,65,32,67,72,65,67,65,76,
-  79,83,65,0,25,1,200,84,1,1,4,0,67,76,26,52,9,1,2,51,
-  5,6,25,51,51,32,2,26,31,5,142,25,51,51,32,2,26,31,129,56,
-  5,92,12,64,16,76,65,32,67,72,65,67,65,76,79,83,65,0 };
+uint8_t RemoteXY_CONF[] =   // 114 bytes
+  { 255,5,0,55,0,107,0,19,0,0,0,76,65,32,67,72,65,67,65,76,
+  79,83,65,0,25,1,200,84,1,1,5,0,67,64,25,75,10,65,2,51,
+  5,6,25,51,51,32,2,26,31,5,142,25,51,51,32,2,26,31,10,176,
+  4,16,16,48,6,20,31,70,73,69,76,68,0,31,82,79,66,79,84,0,
+  71,86,41,30,30,56,0,16,16,255,0,0,0,0,0,0,180,67,0,0,
+  180,66,0,0,112,65,0,0,0,0,16,194,176,0 };
   
 // this structure defines all the variables and events of your control interface 
 struct {
@@ -51,9 +51,11 @@ struct {
   int8_t lefty; // from -100 to 100
   int8_t rightx; // from -100 to 100
   int8_t righty; // from -100 to 100
+  uint8_t fieldOriented; // =1 if state is ON, else =0
 
     // output variables
   char message[51]; // string UTF8 end zero
+  float heading; // from 0 to 360
 
     // other variable
   uint8_t connect_flag;  // =1 if wire connected, else =0

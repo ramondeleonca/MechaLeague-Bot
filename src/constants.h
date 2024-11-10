@@ -4,17 +4,21 @@
 #include <Arduino.h>
 
 // ! TEAM NUMBER
-const uint TEAM_NUMBER = 1;
+const int TEAM_NUMBER = -1;
 
 // * NEW CONSTANTS
 // Motor controller
 const int MOTOR_CONTROLLER_RX_PIN = 16;
 const int MOTOR_CONTROLLER_TX_PIN = 17;
 const int MOTOR_CONTROLLER_ENABLE_PIN = 2;
-const float MOTOR_1_MULTIPLIER = 1.0;
-const float MOTOR_2_MULTIPLIER = 1.0;
+const float MOTOR_1_MULTIPLIER = 0.95;
+const float MOTOR_2_MULTIPLIER = 0.95;
 const float MOTOR_3_MULTIPLIER = 1.0;
 const float MOTOR_4_MULTIPLIER = 1.0;
+
+// Servos
+const int SERVO_1_PIN = 19;
+const int SERVO_2_PIN = 23;
 
 // Battery
 const int BATTERY_PIN = 34;
@@ -29,6 +33,9 @@ const String SSID = "MechaLeague-Bot_" + String(TEAM_NUMBER);
 const String PASSWORD = "blue3526";
 const String HOSTNAME = "mechaleague-bot";
 const uint WIFI_CHANNEL = 11;
+
+// Control
+const float CONTROLLER_DEADBAND = 0.1;
 
 // LEDs
 const uint LED_PIN = 4;
