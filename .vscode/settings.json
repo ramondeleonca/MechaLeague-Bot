@@ -5,6 +5,7 @@
         "cstddef": "cpp",
         "memory": "cpp",
         "type_traits": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "new": "cpp"
     }
 }

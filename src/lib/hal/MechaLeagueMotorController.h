@@ -35,7 +35,7 @@ class MechaLeagueMotorController {
         int motorValues[4] = {0, 0, 0, 0};
 
     public:
-        MechaLeagueMotorController(uint rxPin, uint txPin, uint enablePin) {
+        MechaLeagueMotorController(uint rxPin = 16, uint txPin = 17, uint enablePin = 2) {
             this->rxPin = rxPin;
             this->txPin = txPin;
             this->enablePin = enablePin;

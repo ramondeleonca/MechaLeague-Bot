@@ -1,6 +1,8 @@
 #ifndef CHASSIS_SPEEDS_H
 #define CHASSIS_SPEEDS_H
 
+#include <Arduino.h>
+
 class ChassisSpeeds {
     private:
         float vx = 0.0;
@@ -42,6 +44,10 @@ class ChassisSpeeds {
             this->vx = vx * cos(heading) - vy * sin(heading);
             this->vy = vx * sin(heading) + vy * cos(heading);
             this->omega = omega;
+        };
+
+        String toString() {
+            return "ChassisSpeeds{vx=" + String(this->vx) + ", vy=" + String(this->vy) + ", omega=" + String(this->omega) + "}";
         };
 };
 

@@ -10,10 +10,8 @@
 #include <ESP32Servo.h>
 #include <lib/utility/math.h>
 #include <lib/hal/AllianceLED.h>
+#include <ps5Controller.h>
 #include <lib/mechalib/motor/MOTOR_CONTROLLER_DRV8871.h>
-
-// #include <impl/tests/remotexy/defs.h>
-#include <impl/tests/remotexy/wifi-field-defs.h>
 
 // Motors
 MOTOR_CONTROLLER_DRV8871 frontLeft(25, 26, 0.15);
@@ -25,6 +23,8 @@ MOTOR_CONTROLLER_DRV8871 climberMotor(32, 33, 0.2);
 float wheelSpeeds[4];
 MecanumDriveKinematics kinematics(WHEEL_DIAMETER_MM / 1000, TRACK_WIDTH_MM / 1000, WHEEL_BASE_MM / 1000);
 ChassisSpeeds chassisSpeeds;
+
+const char *controllerMAC = "90:b6:85:5a:94:ce";
 
 void setup() {
     // Initialize motors (VERY IMPORTANT TO DO THIS VERY FIRST)
@@ -38,7 +38,7 @@ void setup() {
     Serial.begin(115200);
 
     // Initialize RemoteXY
-    RemoteXY_Init();
+    ps5.begin(controllerMAC);
 
     frontLeft.set(1, true);
     frontRight.set(1, true);
@@ -60,23 +60,35 @@ void setup() {
 }
 
 void loop() {
-    RemoteXY_Handler();
-
+    if (ps5.LStickX()) {
+      Serial.printf("Left Stick x at %d\n", ps5.LStickX());
+    }
+    if (ps5.LStickY()) {
+      Serial.printf("Left Stick y at %d\n", ps5.LStickY());
+    }
+    if (ps5.RStickX()) {
+      Serial.printf("Right Stick x at %d\n", ps5.RStickX());
+    }
+    if (ps5.RStickY()) {
+      Serial.printf("Right Stick y at %d\n", ps5.RStickY());
+    }
+    
     // Update chassis speeds
-    if (RemoteXY.connect_flag) {
-        float xSpeed = ((float)RemoteXY.lefty / 100.0) * 0.5; // Meters per second
-        float ySpeed = (-(float)RemoteXY.leftx / 100.0) * 0.75; // Meters per second
-        float rotSpeed = (-(float)RemoteXY.rightx / 100.0) * 2.0; // Radians per second
+    if (ps5.isConnected()) {
+        float xSpeed = ((float)ps5.LStickY() / 127.0) * 0.5; // Meters per second
+        float ySpeed = (-(float)ps5.LStickX() / 127.0) * 0.75; // Meters per second
+        float rotSpeed = (-(float)ps5.RStickX() / 127.0) * 2.0; // Radians per second
 
         chassisSpeeds.set(xSpeed, ySpeed, rotSpeed);
 
         Serial.println(chassisSpeeds.toString());
 
         // Update climber motor
-        float climberSpeed = (RemoteXY.righty / 100) * 0.5; // Max Voltage used to calculate vbat percentage
+        float climberSpeed = ((float)ps5.RStickY() / 100) * 0.5; // Max Voltage used to calculate vbat percentage
         climberMotor.set(climberSpeed);
     } else {
         chassisSpeeds.set(0, 0, 0);
+        // ps5.begin(controllerMAC);
     }
 
     // Update wheel speeds
@@ -99,5 +111,5 @@ void loop() {
     Serial.print((ESP.getFreeHeap() * 100) / ESP.getHeapSize());
     Serial.println("%");
 
-    RemoteXY_delay(20);
+    delay(20);
 }
