@@ -8,7 +8,8 @@ MechaLeague Robot
 
 The open source ESP32 and Arduino based robot platform for the Mecha League competition
 
-![Robot moving with a PS5 controller](https://utfs.io/f/hAf2iFVEiFDHNNFXzNHU3Z0u1sfAz6H75eo2TKBVPMJgEhpd)
+<img src="https://utfs.io/f/hAf2iFVEiFDHNNFXzNHU3Z0u1sfAz6H75eo2TKBVPMJgEhpd" alt="Robot moving with a PS5 controller">
+
 
 Read the whitepaper here
 https://www.figma.com/slides/AWmnqagFZSoyzxdnBp5D1x/MechaLeague-Robot-Whitepaper?node-id=1-266&t=clcfMGteuZ0O0do1-1
