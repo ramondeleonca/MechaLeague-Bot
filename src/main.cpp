@@ -1,7 +1,7 @@
-#define TEAM_ID 118
-// #include <impl/tests/ps5_mecanum/test.h>
+#include <impl/tests/ps5_mecanum/ps5.h>
+// #include <impl/tests/pcatest.h>
 // #include <impl/tests/ps5_tank/ps5.h>
-#include <impl/tests/ps5_tank_ML_motorcontroller/ps5.h>
+// #include <impl/tests/ps5_tank_ML_motorcontroller/ps5.h>
 // #include <impl/tests/remotexy_tank/remotexy.h>
 // #include <impl/tests/remotexy_tank/motor_test.h>
 // #include <impl/tests/new-controller.h>
