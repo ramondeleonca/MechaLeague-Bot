@@ -34,11 +34,6 @@ class Comms {
         // Field
         const char* fieldSSID = "MechaLeague-Field";
         const char* fieldPass = "12345678";
-        const IPAddress subnet = IPAddress(255, 255, 0, 0);
-        const IPAddress gateway = IPAddress(192, 168, 255, 255);
-        const IPAddress dns1 = IPAddress(8, 8, 8, 8);
-        const IPAddress dns2 = IPAddress(1, 1, 1, 1);
-        IPAddress localIP = IPAddress();
 
         // MDNS
         const char* mdnsFormat = "mechaleague-bot-"; // mechaleague-bot-<team_id>.local
@@ -47,36 +42,13 @@ class Comms {
         WiFiUDP controlServer;
         const uint controlServerPort = 1010;
 
+        // Telemetry sockets
         WiFiUDP telemetryServer;
         const uint telemetryServerPort = 1011;
 
         bool validateTeamID() {
             if (TEAM_ID > 0 && TEAM_ID <= 9999) return true;
             return false;
-        }
-
-    public:
-        void startMDNS() {
-            char mdnsName[sizeof(mdnsFormat) + 4]; // Enough space for "mechaleague-bot-9999\0"
-            snprintf(mdnsName, sizeof(mdnsName), "%s%d", mdnsFormat, TEAM_ID); // mechaleague-bot-<team_id>
-            MDNS.begin(mdnsName);
-        }
-
-        void startServer() {
-            controlServer.begin(controlServerPort);
-            telemetryServer.begin(telemetryServerPort);
-        }
-
-        COMMS_CONN_ERR connectToField() {
-            return connectToWiFi(fieldSSID, fieldPass);
-        }
-
-        static char* generateIPAddress(int teamID) {
-            int part1 = (teamID / 100) % 100; // First two digits
-            int part2 = teamID % 100;         // Last two digits
-            static char ipAddress[16]; // Static ensures it persists after function returns
-            snprintf(ipAddress, sizeof(ipAddress), "192.168.%d.%d", part1, part2);
-            return ipAddress;
         }
 
         COMMS_CONN_ERR connectToWiFi(const char* ssid, const char* password = NULL) {
@@ -108,6 +80,22 @@ class Comms {
             #endif
         }
 
+    public:
+        void startMDNS() {
+            char mdnsName[sizeof(mdnsFormat) + 4]; // Enough space for "mechaleague-bot-9999\0"
+            snprintf(mdnsName, sizeof(mdnsName), "%s%d", mdnsFormat, TEAM_ID); // mechaleague-bot-<team_id>
+            MDNS.begin(mdnsName);
+        }
+
+        void startServer() {
+            controlServer.begin(controlServerPort);
+            telemetryServer.begin(telemetryServerPort);
+        }
+
+        COMMS_CONN_ERR connectToField() {
+            return connectToWiFi(fieldSSID, fieldPass);
+        }
+
     // Singleton
     private:
         bool init = false;
@@ -115,10 +103,6 @@ class Comms {
         Comms() {};
         static Comms& getInstance() {
             static Comms instance;
-            if (!instance.init) {
-                instance.init = true;
-                instance.localIP.fromString(Comms::generateIPAddress(TEAM_ID));
-            }
             return instance;
         }
 };

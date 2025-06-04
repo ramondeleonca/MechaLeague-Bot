@@ -20,6 +20,9 @@ MOTOR_CONTROLLER_DRV8871 backLeft(2, 4, 0.15);
 MOTOR_CONTROLLER_DRV8871 backRight(18, 19, 0.15);
 MOTOR_CONTROLLER_DRV8871 climberMotor(32, 33, 0.2);
 
+// Gripper
+Servo gripper;
+
 // Servos
 Servo lowerJoint;
 Servo upperJoint;
@@ -56,8 +59,9 @@ void setup() {
     ESP32PWM::allocateTimer(2);
     ESP32PWM::allocateTimer(3);
 
-    lowerJoint.attach(14);
-    upperJoint.attach(27);
+    // lowerJoint.attach(14);
+    // upperJoint.attach(27);
+    gripper.attach(23);
 
     // Set all motors to brake
     frontLeft.setIdleMode(MOTOR_CONTROLLER_DRV8871::DRV8871_IdleMode::kBrake);
@@ -124,16 +128,18 @@ void loop() {
         climberMotor.set(climberSpeed);
 
         // Update arm servos
-        if (ps5.L1()) {
-            lowerJoint.write(ArmSetpoints::PICKUP.joint1);
-            upperJoint.write(ArmSetpoints::PICKUP.joint2);
-        } else if (ps5.R1()) {
-            lowerJoint.write(ArmSetpoints::SCORE.joint1);
-            upperJoint.write(ArmSetpoints::SCORE.joint2);
-        } else {
-          lowerJoint.write(ArmSetpoints::STOW.joint1);
-          upperJoint.write(ArmSetpoints::STOW.joint2);
-        }
+        // if (ps5.L1()) {
+        //     lowerJoint.write(ArmSetpoints::PICKUP.joint1);
+        //     upperJoint.write(ArmSetpoints::PICKUP.joint2);
+        // } else if (ps5.R1()) {
+        //     lowerJoint.write(ArmSetpoints::SCORE.joint1);
+        //     upperJoint.write(ArmSetpoints::SCORE.joint2);
+        // } else {
+        //   lowerJoint.write(ArmSetpoints::STOW.joint1);
+        //   upperJoint.write(ArmSetpoints::STOW.joint2);
+        // }
+
+        gripper.write(ps5.Square() ? 90 : 0); // Open gripper if R1 is pressed, otherwise close it
     } else {
         chassisSpeeds.set(0, 0, 0);
         // ps5.begin(controllerMAC);

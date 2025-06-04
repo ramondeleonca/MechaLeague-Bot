@@ -13,6 +13,12 @@ class MOTOR_CONTROLLER_L298N : public MOTOR_CONTROLLER_Base {
         int en;
 
     public:
+        /**
+         * @brief Constructor for the L298N motor controller.
+         * @param in1 Pin for IN1 control.
+         * @param in2 Pin for IN2 control.
+         * @param en Pin for EN control (PWM).
+         */
         MOTOR_CONTROLLER_L298N(int in1, int in2, int en, float deadband = 0.075) {
             this->in1 = in1;
             this->in2 = in2;
