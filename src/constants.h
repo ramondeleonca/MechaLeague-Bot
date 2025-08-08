@@ -52,7 +52,6 @@ const uint REST_SERVER_PORT = 80;
 const uint WS_SERVER_PORT = 81;
 const String SSID = "MechaLeague-Bot_" + String(TEAM_NUMBER);
 // ! PASSWORD IS CHANGED INTERNALLY
-const String PASSWORD = "blue3526";
 const String HOSTNAME = "mechaleague-bot";
 const uint WIFI_CHANNEL = 11;
 

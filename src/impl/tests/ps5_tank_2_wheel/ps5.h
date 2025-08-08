@@ -1,17 +1,7 @@
 #include <Arduino.h>
-#include <constants.h>
-#include <lib/hal/MechaLeagueMotorController.h>
 #include <lib/drive/ChassisSpeeds.h>
-#include <lib/drive/MecanumDriveKinematics.h>
-#include <Wire.h>
-#include <WS2812FX.h>
 #include <lib/control/JoystickUtils.h>
-#include <lib/utility/hooks.h>
-#include <ESP32Servo.h>
-#include <lib/utility/math.h>
-#include <lib/hal/AllianceLED.h>
 #include <ps5Controller.h>
-#include <lib/mechalib/motor/MOTOR_CONTROLLER_DRV8871.h>
 #include <lib/mechalib/motor/MOTOR_CONTROLLER_L298N.h>
 
 // Motors
@@ -67,7 +57,7 @@ void loop() {
     if (ps5.isConnected()) {
         float xSpeed = (-(float)ps5.LStickY() / 127.0) * 1; // 0.5; // Meters per second
         // float ySpeed = (-(float)ps5.LStickX() / 127.0) * 0.75; // Meters per second
-        float rotSpeed = ((float)ps5.RStickX() / 127.0) * 0.5; // Radians per second
+        float rotSpeed = (-(float)ps5.RStickX() / 127.0) * 1; // Radians per second
 
         chassisSpeeds.set(xSpeed, 0.0, rotSpeed);
 
