@@ -12,12 +12,12 @@ class I2C_MUX_TCA9548A {
     private:
         TwoWire *wire;
         TCA9548A mux;
-        const static uint8_t channels = 8;
-        bool channelStates[channels] = {false};
+        const static uint8_t n_channels = 8;
+        bool channelStates[n_channels] = {false};
 
         bool validateChannel(uint8_t channel) {
-            if (channel >= channels - 1 || channel < 0)  {
-                Serial.println("Invalid channel, must be between 0 and " + String(channels - 1));
+            if (channel >= n_channels - 1 || channel < 0)  {
+                Serial.println("Invalid channel, must be between 0 and " + String(n_channels - 1));
                 return false;
             }
             return true;
@@ -74,7 +74,7 @@ class I2C_MUX_TCA9548A {
          */
         void exposeAllChannels() {
             this->mux.openAll();
-            for (uint8_t i = 0; i < channels; i++) this->channelStates[i] = true;
+            for (uint8_t i = 0; i < n_channels; i++) this->channelStates[i] = true;
         }
 
         /**
@@ -82,7 +82,7 @@ class I2C_MUX_TCA9548A {
          */
         void hideAllChannels() {
             this->mux.closeAll();
-            for (uint8_t i = 0; i < channels; i++) this->channelStates[i] = false;
+            for (uint8_t i = 0; i < n_channels; i++) this->channelStates[i] = false;
         }
 
         /**

@@ -7,10 +7,17 @@
 #include <lib/mechalib/motor/MotorSafety.h>
 
 class MOTOR_CONTROLLER_L298N : public MOTOR_CONTROLLER_Base {
+    public:
+        enum L298N_IdleMode {
+            kCoast = 0,
+            kBrake = 1
+        };
+
     private:
         int in1;
         int in2;
         int en;
+        L298N_IdleMode idleMode = L298N_IdleMode::kCoast;
 
     public:
         /**
@@ -25,6 +32,10 @@ class MOTOR_CONTROLLER_L298N : public MOTOR_CONTROLLER_Base {
             this->en = en;
             this->deadband = deadband;
         };
+
+        void setIdleMode(L298N_IdleMode mode) {
+            this->idleMode = mode;
+        }
 
         void begin() {
             pinMode(in1, OUTPUT);
@@ -42,15 +53,16 @@ class MOTOR_CONTROLLER_L298N : public MOTOR_CONTROLLER_Base {
             if (speed > 0) {
                 digitalWrite(in1, HIGH);
                 digitalWrite(in2, LOW);
+                analogWrite(en, abs(speed) * 255);
             } else if (speed < 0) {
                 digitalWrite(in1, LOW);
                 digitalWrite(in2, HIGH);
+                analogWrite(en, abs(speed) * 255);
             } else {
-                digitalWrite(in1, LOW);
-                digitalWrite(in2, LOW);
+                digitalWrite(in1, HIGH);
+                digitalWrite(in2, HIGH);
+                analogWrite(en, (idleMode == L298N_IdleMode::kBrake) ? 255 : 0);
             }
-
-            analogWrite(en, abs(speed) * 255);
 
             // Update followers
             updateFollowers(speed, isBeep);

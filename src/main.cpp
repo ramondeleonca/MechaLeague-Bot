@@ -22,4 +22,5 @@
 // #include <impl/tests/climber/climber_0_180.h>
 // #include <impl/tests/remotexy/remotexy.h>
 // #include <impl/mechalib/main.h>
-#include <impl/main/VECTOR-1/main.hpp>
+// #include <impl/main/VECTOR-1/main.hpp>
+#include <impl/main/VECTOR-1/main-proto.hpp>

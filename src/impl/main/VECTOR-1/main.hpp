@@ -9,8 +9,10 @@
 #include <ESP32Servo.h>
 #include <lib/utility/math.h>
 #include <lib/hal/AllianceLED.h>
-#include <../lib/ps5-esp32-main/src/ps5Controller.h>
+// #include <../lib/PS4-esp32-main/src/PS4Controller.h>
+#include <PS4Controller.h>
 #include <lib/mechalib/motor/MOTOR_CONTROLLER_DRV8871.h>
+#include <ps5Controller.h>
 #include <ESP32Servo.h>
 
 // Motors
@@ -20,7 +22,7 @@ MOTOR_CONTROLLER_DRV8871 backLeft(2, 4, 0.15);
 MOTOR_CONTROLLER_DRV8871 backRight(18, 19, 0.15);
 MOTOR_CONTROLLER_DRV8871 climberMotor(32, 33, 0.2);
 
-// Servos
+// Servosd
 Servo lowerJoint;
 Servo upperJoint;
 
@@ -41,6 +43,8 @@ MecanumDriveKinematics kinematics(WHEEL_DIAMETER_MM / 1000, TRACK_WIDTH_MM / 100
 ChassisSpeeds chassisSpeeds;
 
 const char *controllerMAC = "90:b6:85:5a:94:ce";
+// const char *controllerMAC = "8A:4F:4A:16:25:FE";
+// const char *controllerMAC = "8a:4f:4a:16:25:fe";
 
 void setup() {
     // Initialize motors (VERY IMPORTANT TO DO THIS VERY FIRST)
@@ -69,12 +73,12 @@ void setup() {
     // Begin serial
     Serial.begin(115200);
 
-    // Initialize PS5 controller
+    // Initialize PS4 controller
     ps5.begin(controllerMAC);
-    ps5.attachOnConnect([]() {
-        Serial.println("PS5 connected");
-        ps5.setLed(255, 165, 0);
-    });
+    // PS4.attachOnConnect([]() {
+    //     Serial.println("PS4 connected");
+    //     PS4.setLed(255, 165, 0);
+    // });
 
     frontLeft.set(1, true);
     frontRight.set(1, true);
@@ -112,7 +116,7 @@ void loop() {
     // Update chassis speeds
     if (ps5.isConnected()) {
         float xSpeed = (-(float)ps5.LStickY() / 127.0) * 0.5; // Meters per second
-        float ySpeed = ((float)ps5.LStickX() / 127.0) * 0.75; // Meters per second
+        float ySpeed = (-(float)ps5.LStickX() / 127.0) * 0.75; // Meters per second
         float rotSpeed = (((float)ps5.L2Value() - (float)ps5.R2Value()) / 127.0) * 2; // Radians per second
 
         chassisSpeeds.set(xSpeed, ySpeed, rotSpeed);
